@@ -39,7 +39,7 @@ def setVal():
 
 
 splitSign = [',','(',')','[',']','{','}',':','>','\n']
-lora_pattern = r'^<[^<>:]'
+lora_pattern = r'^[\s]*<[^<>]+'
 left_symbol = ['[','{','(']
 right_symbol = [']','}',')']
 
@@ -66,8 +66,7 @@ def prompts_to_arr(prompts:str):
                     word+=sub
             else:
                 word+=sub
-        print(ls)
-        return ls
+        return [item.strip(' ') for item in ls if item.strip(' ')]
     return []
 
 def get_prompt(input:str):
@@ -97,6 +96,7 @@ def filter_empty(prompts:List[str],next:str):
 def filter_prompts_list(input:List[str],blocked:List[str]):
     out_prompts = []
     for item in input:
+        item = f'{item} ' if item == ',' else f'{item}'
         if enable_blocked_prompts and get_prompt(item) in blocked:
             continue
         if enable_blocked_prompts:
