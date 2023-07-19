@@ -1,11 +1,14 @@
 # Profanity Filter
 
 ---
-[中文](readme.md) | english
+[中文](readme.md) | English
 
 - This is a plugin for [stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui)
-- It can filter out profanity words from prompts and negative_prompts
+- It can filter profanity words in prompts and negative_prompts
 - The profanity word files can be specified separately
+- It can filter empty prompts
+- It can filter duplicate prompts
+- All functionalities include configurable settings
 
 ## Profanity word file names, one word per line in the sd root directory
 
