@@ -151,14 +151,14 @@ class emptyFilter(scripts.Script):
             p.all_negative_prompts[i] = filter_prompts(p.all_negative_prompts[i],blocked_negative_prompts)
 
 def on_ui_settings():
-    section = ("prompts-filter", "prompts filter")
+    section = ("prompts_filter",'Tag过滤器' if shared.opts.localization == 'zh_CN' else "prompts filter" )
     
-    shared.opts.add_option("enable_blocked_prompts", shared.OptionInfo(enable_blocked_prompts, "启用过滤屏蔽词", section=section))
-    shared.opts.add_option("enable_empty_prompts", shared.OptionInfo(enable_empty_prompts, "启用过滤空标签", section=section))
-    shared.opts.add_option("enable_repetition_prompts", shared.OptionInfo(enable_empty_prompts, "启用过滤重复标签", section=section))
+    shared.opts.add_option("enable_blocked_prompts", shared.OptionInfo(enable_blocked_prompts, "启用过滤屏蔽词" if shared.opts.localization == 'zh_CN' else 'Enable filter for blocked words.', section=section))
+    shared.opts.add_option("enable_empty_prompts", shared.OptionInfo(enable_empty_prompts, "启用过滤空标签"  if shared.opts.localization == 'zh_CN' else 'Enable empty prompts filter.', section=section))
+    shared.opts.add_option("enable_repetition_prompts", shared.OptionInfo(enable_empty_prompts, "启用过滤重复标签"  if shared.opts.localization == 'zh_CN' else 'Enable duplicate prompts filter', section=section))
     
-    shared.opts.add_option("blocked_prompts_txt_file", shared.OptionInfo(blocked_prompts_txt_file, "屏蔽词文件路径", section=section))
-    shared.opts.add_option("blocked_negative_prompts_txt_file", shared.OptionInfo(blocked_negative_prompts_txt_file, "反向tag的屏蔽词文件路径", section=section))
+    shared.opts.add_option("blocked_prompts_txt_file", shared.OptionInfo(blocked_prompts_txt_file, "屏蔽词文件路径"  if shared.opts.localization == 'zh_CN' else 'The path of the file storing the blocked words.', section=section))
+    shared.opts.add_option("blocked_negative_prompts_txt_file", shared.OptionInfo(blocked_negative_prompts_txt_file, "反向tag的屏蔽词文件路径"  if shared.opts.localization == 'zh_CN' else 'The path to the file storing negative prompts blocking words.', section=section))
     
 
     shared.opts.onchange('enable_blocked_prompts', setVal)
