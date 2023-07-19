@@ -83,7 +83,7 @@ def get_prompt(input:str):
 
 def filter_repetition(prompts:List[str],next:str):
     item = get_prompt(next)
-    if item in split_sign: return prompts,next
+    if item in split_sign or not item: return prompts,next
     if item in repetition_prompts:
         return prompts,None
     repetition_prompts.append(item)
@@ -133,6 +133,7 @@ def filter_prompts_list(input:List[str],blocked:List[str]):
             continue
         out_prompts.append(item)
     prompts = ''.join(out_prompts)
+    print('333',repetition_prompts)
     return prompts
 
 def filter_prompts(prompts:str,blocked:List[str]):
