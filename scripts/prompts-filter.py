@@ -7,6 +7,7 @@ from modules.paths_internal import data_path
 
 DATA_PATH = Path(data_path)
 
+
 def get_prompts_by_file(path:Path):
     if path.exists():
         with path.open('r') as f:
@@ -91,7 +92,6 @@ def filter_empty(prompts:List[str],tag:str):
     if not prompts: return prompts,tag
     last = get_prompt(prompts[-1])
     item = get_prompt(tag)
-    print(last,item)
     if item == ',' and last == ',':
         return prompts,None
     if item == ',' and last in left_symbol:
@@ -134,7 +134,6 @@ def filter_prompts_list(input:List[str],blocked:List[str]):
 def filter_prompts(prompts:str,blocked:List[str]):
     if not blocked: return prompts
     arr_prompts = prompts_to_arr(prompts)
-    print(arr_prompts)
     return filter_prompts_list(arr_prompts,blocked)
 
 class emptyFilter(scripts.Script):
