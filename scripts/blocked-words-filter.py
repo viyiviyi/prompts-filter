@@ -6,14 +6,19 @@ from modules import scripts,shared,script_callbacks
 from modules.paths_internal import data_path
 DATA_PATH = Path(data_path)
 
-blocked_prompts_txt_file = DATA_PATH.joinpath('blocked_prompts.txt')
-blocked_negative_prompts_txt_file = DATA_PATH.joinpath('blocked_negative_prompts.txt')
+blocked_prompts_txt_file = str(DATA_PATH.joinpath('blocked_prompts.txt'))
+blocked_negative_prompts_txt_file = str(DATA_PATH.joinpath('blocked_negative_prompts.txt'))
 
 def setVal():
     global blocked_prompts_txt_file
     global blocked_negative_prompts_txt_file
+    global blocked_prompts
+    global blocked_negative_prompts
+
     blocked_prompts_txt_file = shared.opts.data.get('blocked_prompts_txt_file',blocked_prompts_txt_file)
     blocked_negative_prompts_txt_file = shared.opts.data.get('blocked_negative_prompts_txt_file',blocked_negative_prompts_txt_file)
+    blocked_prompts=get_prompts_by_file(Path(blocked_prompts_txt_file))
+    blocked_negative_prompts=get_prompts_by_file(Path(blocked_negative_prompts_txt_file))
 
 splitSign = [',','(',')','[',']','{','}',':','>']
 
@@ -26,8 +31,8 @@ def get_prompts_by_file(path:Path):
         return []
 
 
-blocked_prompts=get_prompts_by_file(blocked_prompts_txt_file)
-blocked_negative_prompts=get_prompts_by_file(blocked_negative_prompts_txt_file)
+blocked_prompts=get_prompts_by_file(Path(blocked_prompts_txt_file))
+blocked_negative_prompts=get_prompts_by_file(Path(blocked_negative_prompts_txt_file))
 
 lora_pattern = r'^<[^<>:]'
 
@@ -107,7 +112,7 @@ class emptyFilter(scripts.Script):
             p.all_negative_prompts[i] = filter_prompts(p.all_negative_prompts[i],blocked_negative_prompts)
 
 def on_ui_settings():
-    section = ("fp", "filter blocked words")
+    section = ("filter-blocked-words", "过滤屏蔽词")
     shared.opts.add_option("blocked_prompts_txt_file", shared.OptionInfo(blocked_prompts_txt_file, "屏蔽词文件路径", section=section))
     shared.opts.add_option("blocked_negative_prompts_txt_file", shared.OptionInfo(blocked_negative_prompts_txt_file, "反向tag的屏蔽词文件路径", section=section))
 
