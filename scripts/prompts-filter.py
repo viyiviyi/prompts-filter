@@ -83,7 +83,8 @@ def get_prompt(input:str):
 
 def filter_repetition(prompts:List[str],next:str):
     item = get_prompt(next)
-    if item not in split_sign and item in repetition_prompts:
+    if item in split_sign: return prompts,next
+    if item in repetition_prompts:
         return prompts,None
     repetition_prompts.append(item)
     return prompts,next
@@ -105,27 +106,30 @@ def filter_empty(prompts:List[str],tag:str):
     return prompts,tag
 
 def filter_prompts_list(input:List[str],blocked:List[str]):
+    global repetition_prompts
+    repetition_prompts = []
     out_prompts:List[str] = []
     for item in input:
         item = item + (' ' if item == ',' else '')
         next_item = item
         is_skip = False
         if enable_blocked_prompts and get_prompt(item) in blocked:
+            next_item = None
             is_skip = True
-        if enable_repetition_prompts:
+        if next_item is not None and enable_repetition_prompts:
             _out_prompts,_next = filter_repetition(out_prompts,item)
             out_prompts = _out_prompts
             next_item = _next
-        if enable_blocked_prompts and next_item and is_skip:
+        if next_item is not None and enable_blocked_prompts and is_skip:
             _out_prompts,_next = filter_empty(out_prompts,item)
             out_prompts = _out_prompts
             next_item = _next
             is_skip = False
-        if next_item and enable_empty_prompts:
+        if next_item is not None and enable_empty_prompts:
             _out_prompts,_next = filter_empty(out_prompts,item)
             out_prompts = _out_prompts
             next_item = _next
-        if not next_item:
+        if next_item is None:
             continue
         out_prompts.append(item)
     prompts = ''.join(out_prompts)
