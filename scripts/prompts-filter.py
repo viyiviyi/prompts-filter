@@ -12,7 +12,7 @@ def get_prompts_by_file(path:Path):
     if path.exists():
         with path.open('r') as f:
             list = f.readlines()
-            return [item.strip().lower() for item in list if item.strip() ]
+            return [rf'\b(?i){item.strip().lower()}\b' for item in list if item.strip() ]
     else:
         return []
 
@@ -105,6 +105,12 @@ def filter_empty(prompts:List[str],tag:str):
         return filter_empty(prompts,tag)
     return prompts,tag
 
+def is_blocked(input:str,blocked:List[str]):
+    if  get_prompt(input) in split_sign: return False
+    for item in blocked:
+        if re.search(item,input):return True
+    return False
+
 def filter_prompts_list(input:List[str],blocked:List[str]):
     global repetition_prompts
     repetition_prompts = []
@@ -113,7 +119,7 @@ def filter_prompts_list(input:List[str],blocked:List[str]):
         item = item + (' ' if item == ',' else '')
         next_item = item
         is_skip = False
-        if enable_blocked_prompts and get_prompt(item) in blocked:
+        if enable_blocked_prompts and is_blocked(item,blocked):
             next_item = None
             is_skip = True
         if next_item is not None and enable_repetition_prompts:
@@ -133,7 +139,6 @@ def filter_prompts_list(input:List[str],blocked:List[str]):
             continue
         out_prompts.append(item)
     prompts = ''.join(out_prompts)
-    print('333',repetition_prompts)
     return prompts
 
 def filter_prompts(prompts:str,blocked:List[str]):
