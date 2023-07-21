@@ -50,8 +50,6 @@ lora_pattern = r'^[\s]*<[^<>]+'
 left_symbol = ['[','{','(']
 right_symbol = [']','}',')']
 
-repetition_prompts = []
-
 # 把字符串处理成tag或符号
 def prompts_to_arr(prompts:str):
     ls = []
@@ -81,7 +79,7 @@ def prompts_to_arr(prompts:str):
 def get_prompt(input:str):
     return input.strip().lower()
 
-def filter_repetition(prompts:List[str],next:str):
+def filter_repetition(prompts:List[str],next:str,repetition_prompts:List[str]):
     item = get_prompt(next)
     if item in split_sign or not item: return prompts,next
     if item in repetition_prompts:
@@ -111,9 +109,7 @@ def is_blocked(input:str,blocked:List[str]):
         if re.search(item,input):return True
     return False
 
-def filter_prompts_list(input:List[str],blocked:List[str]):
-    global repetition_prompts
-    repetition_prompts = []
+def filter_prompts_list(input:List[str],blocked:List[str],repetition_prompts:List[str]):
     out_prompts:List[str] = []
     for item in input:
         item = item + (' ' if item == ',' else '')
@@ -123,7 +119,7 @@ def filter_prompts_list(input:List[str],blocked:List[str]):
             next_item = None
             is_skip = True
         if next_item is not None and enable_repetition_prompts:
-            _out_prompts,_next = filter_repetition(out_prompts,item)
+            _out_prompts,_next = filter_repetition(out_prompts,item,repetition_prompts)
             out_prompts = _out_prompts
             next_item = _next
         if next_item is not None and enable_blocked_prompts and is_skip:
@@ -141,10 +137,10 @@ def filter_prompts_list(input:List[str],blocked:List[str]):
     prompts = ''.join(out_prompts)
     return prompts
 
-def filter_prompts(prompts:str,blocked:List[str]):
+def filter_prompts(prompts:str,blocked:List[str],repetition_prompts:List[str]=[]):
     if not blocked: return prompts
     arr_prompts = prompts_to_arr(prompts)
-    return filter_prompts_list(arr_prompts,blocked)
+    return filter_prompts_list(arr_prompts,blocked,repetition_prompts)
 
 class emptyFilter(scripts.Script):
     def title(self):
@@ -154,11 +150,13 @@ class emptyFilter(scripts.Script):
         return scripts.AlwaysVisible
 
     def process(self, p):
+        repetition_prompts = []
         for i in range(len(p.all_prompts)):
-            p.all_prompts[i] = filter_prompts(p.all_prompts[i],blocked_prompts)
+            p.all_prompts[i] = filter_prompts(p.all_prompts[i],blocked_prompts,repetition_prompts)
 
+        repetition_prompts = []
         for i in range(len(p.all_negative_prompts)):
-            p.all_negative_prompts[i] = filter_prompts(p.all_negative_prompts[i],blocked_negative_prompts)
+            p.all_negative_prompts[i] = filter_prompts(p.all_negative_prompts[i],blocked_negative_prompts,repetition_prompts)
 
 def on_ui_settings():
     section = ("prompts_filter",'Tag过滤器' if shared.opts.localization == 'zh_CN' else "prompts filter" )
