@@ -16,11 +16,17 @@ def get_prompts_by_file(path:Path):
     else:
         return []
 
+if not DATA_PATH.joinpath('blocked_prompts.txt').exists():
+    DATA_PATH.joinpath('blocked_prompts.txt').write_text('')
+
+if not DATA_PATH.joinpath('blocked_negative_prompts.txt').exists():
+    DATA_PATH.joinpath('blocked_negative_prompts.txt').write_text('')
+
 blocked_prompts_txt_file = str(DATA_PATH.joinpath('blocked_prompts.txt'))
 blocked_negative_prompts_txt_file = str(DATA_PATH.joinpath('blocked_negative_prompts.txt'))
 
-blocked_prompts=get_prompts_by_file(Path(blocked_prompts_txt_file))
-blocked_negative_prompts=get_prompts_by_file(Path(blocked_negative_prompts_txt_file))
+blocked_prompts=[]
+blocked_negative_prompts=[]
 
 enable_blocked_prompts = True
 enable_empty_prompts = True
@@ -138,7 +144,6 @@ def filter_prompts_list(input:List[str],blocked:List[str],repetition_prompts:Lis
     return prompts
 
 def filter_prompts(prompts:str,blocked:List[str],repetition_prompts:List[str]=[]):
-    if not blocked: return prompts
     arr_prompts = prompts_to_arr(prompts)
     return filter_prompts_list(arr_prompts,blocked,repetition_prompts)
 
@@ -159,6 +164,7 @@ class emptyFilter(scripts.Script):
             p.all_negative_prompts[i] = filter_prompts(p.all_negative_prompts[i],blocked_negative_prompts,repetition_prompts)
 
 def on_ui_settings():
+    setVal()
     section = ("prompts_filter",'Tag过滤器' if shared.opts.localization == 'zh_CN' else "prompts filter" )
     
     shared.opts.add_option("enable_blocked_prompts", shared.OptionInfo(enable_blocked_prompts, "启用过滤屏蔽词" if shared.opts.localization == 'zh_CN' else 'Enable filter for blocked words.', section=section))
