@@ -116,6 +116,7 @@ def is_blocked(input:str,blocked:List[str]):
     return False
 
 def filter_prompts_list(input:List[str],blocked:List[str],repetition_prompts:List[str]):
+    print(repetition_prompts)
     out_prompts:List[str] = []
     for item in input:
         item = item + (' ' if item == ',' else '')
@@ -155,13 +156,11 @@ class emptyFilter(scripts.Script):
         return scripts.AlwaysVisible
 
     def process(self, p):
-        repetition_prompts = []
         for i in range(len(p.all_prompts)):
-            p.all_prompts[i] = filter_prompts(p.all_prompts[i],blocked_prompts,repetition_prompts)
+            p.all_prompts[i] = filter_prompts(p.all_prompts[i],blocked_prompts,[])
 
-        repetition_prompts = []
         for i in range(len(p.all_negative_prompts)):
-            p.all_negative_prompts[i] = filter_prompts(p.all_negative_prompts[i],blocked_negative_prompts,repetition_prompts)
+            p.all_negative_prompts[i] = filter_prompts(p.all_negative_prompts[i],blocked_negative_prompts,[])
 
 def on_ui_settings():
     setVal()
