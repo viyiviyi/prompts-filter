@@ -79,6 +79,7 @@ def prompts_to_arr(prompts:str):
                     word+=sub
             else:
                 word+=sub
+        ls.append(word)
         return [item.strip(' ') for item in ls if item.strip(' ')]
     return []
 
