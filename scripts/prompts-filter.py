@@ -89,13 +89,16 @@ def get_prompt(input:str):
 def filter_repetition(prompts:List[str],next:str,repetition_prompts:List[str]):
     item = get_prompt(next)
     if item in split_sign or not item: return prompts,next
+    if re.match(r'^[\d\.]+$',item) and len(prompts) > 0 and prompts[-1] == ':': return prompts,next 
     if item in repetition_prompts:
         return prompts,None
     repetition_prompts.append(item)
     return prompts,next
     
 def filter_empty(prompts:List[str],tag:str):
-    if not prompts: return prompts,tag
+    if len(prompts) == 0: 
+        if tag in right_symbol: return prompts,None
+        return prompts,tag
     last = get_prompt(prompts[-1])
     item = get_prompt(tag)
     if item == ',' and last == ',':
@@ -117,7 +120,6 @@ def is_blocked(input:str,blocked:List[str]):
     return False
 
 def filter_prompts_list(input:List[str],blocked:List[str],repetition_prompts:List[str]):
-    print(repetition_prompts)
     out_prompts:List[str] = []
     for item in input:
         item = item + (' ' if item == ',' else '')
@@ -143,6 +145,8 @@ def filter_prompts_list(input:List[str],blocked:List[str],repetition_prompts:Lis
             continue
         out_prompts.append(item)
     prompts = ''.join(out_prompts)
+    if enable_empty_prompts:
+        prompts = re.sub(r'\(:[\d\.]+\)','',prompts).strip(', \n')
     return prompts
 
 def filter_prompts(prompts:str,blocked:List[str],repetition_prompts:List[str]=[]):
