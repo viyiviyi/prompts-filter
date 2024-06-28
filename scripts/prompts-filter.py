@@ -161,12 +161,23 @@ class emptyFilter(scripts.Script):
         return scripts.AlwaysVisible
 
     def process(self, p):
+        p.prompt = filter_prompts(p.prompt,blocked_prompts,[])
+        p.negative_prompt = filter_prompts(p.negative_prompt,blocked_negative_prompts,[])
+        
         for i in range(len(p.all_prompts)):
             p.all_prompts[i] = filter_prompts(p.all_prompts[i],blocked_prompts,[])
 
         for i in range(len(p.all_negative_prompts)):
             p.all_negative_prompts[i] = filter_prompts(p.all_negative_prompts[i],blocked_negative_prompts,[])
-
+        
+        if p.enable_hr:
+            p.hr_prompt = filter_prompts(p.hr_prompt,blocked_prompts,[])
+            p.hr_negative_prompt = filter_prompts(p.hr_negative_prompt,blocked_negative_prompts,[])
+            for i in range(len(p.all_hr_prompts)):
+                p.all_hr_prompts[i] = filter_prompts(p.all_hr_prompts[i],blocked_prompts,[])
+            for i in range(len(p.all_hr_negative_prompts)):
+                p.all_hr_negative_prompts[i] = filter_prompts(p.all_hr_negative_prompts[i],blocked_negative_prompts,[])
+            
 def on_ui_settings():
     setVal()
     section = ("prompts_filter",'Tag过滤器' if shared.opts.localization == 'zh_CN' else "prompts filter" )
